@@ -606,7 +606,9 @@ body {
   border-collapse: collapse;
   font-size: 1.25rem;
 }
-
+.shoppingCart-table p{
+  text-align: center;
+}
 .shoppingCart-table th, .shoppingCart-table td {
   padding: 15px;
   vertical-align: middle;

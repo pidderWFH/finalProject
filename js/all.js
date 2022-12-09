@@ -1,6 +1,6 @@
 // import  axios  from "axios"
 const api_path="travel";
-const token="VGAWyx4NZJdA8ftE3n6wsd3k7M32";
+// const token="VGAWyx4NZJdA8ftE3n6wsd3k7M32";
 const productList = document.querySelector(".productWrap");
 const productSelect = document.querySelector(".productSelect")
 const cartList = document.querySelector(".shoppingCart-tableList");
@@ -87,26 +87,32 @@ function getCartList() {
         document.querySelector(".js-total").textContent = toThousands(respnose.data.finalTotal);
         cartData = respnose.data.carts;
         let str ="";
-        cartData.forEach(function(item){
-            str += `<tr>
-                <td>
-                    <div class="cardItem-title">
-                        <img src="${item.product.images}" alt="">
-                        <p>${item.product.title}</p>
-                    </div>
-                </td>
-                <td>NT$${toThousands(item.product.price)}</td>
-                <td>${item.quantity}</td>
-                <td>NT$${toThousands(item.product.price * item.quantity)}</td>
-                <td class="discardBtn">
-                    <a href="#" class="material-icons" data-id="${item.id}">
-                        clear
-                    </a>
-                </td>
-            </tr>`
-        });
-        
+        // console.log(cartData.length);
+        let cartDataItem = cartData.length;
+        if(cartDataItem === 0){
+            str += `<p>購物車目前是空的</p>`;
+        }else{
+            cartData.forEach(function(item){
+                str += `<tr>
+                    <td>
+                        <div class="cardItem-title">
+                            <img src="${item.product.images}" alt="">
+                            <p>${item.product.title}</p>
+                        </div>
+                    </td>
+                    <td>NT$${toThousands(item.product.price)}</td>
+                    <td>${item.quantity}</td>
+                    <td>NT$${toThousands(item.product.price * item.quantity)}</td>
+                    <td class="discardBtn">
+                        <a href="#" class="material-icons" data-id="${item.id}">
+                            clear
+                        </a>
+                    </td>
+                </tr>`
+            });
+        }
         cartList.innerHTML = str;
+        
     })
 }
 //刪除一項購物車
@@ -180,3 +186,58 @@ function toThousands(x) {
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,",");
     return parts.join(".");
 }
+
+// validate js
+const inputs = document.querySelectorAll("input[name],select[data=payment]");
+const form = document.querySelector(".orderInfo-form");
+const constraints = {
+  "姓名": {
+    presence: {
+      message: "必填欄位"
+    }
+  },
+  "電話": {
+    presence: {
+      message: "必填欄位"
+    },
+    length: {
+      minimum: 8,
+      message: "需超過 8 碼"
+    }
+  },
+  "Email": {
+    presence: {
+      message: "必填欄位"
+    },
+    email: {
+      message: "格式錯誤"
+    }
+  },
+  "寄送地址": {
+    presence: {
+      message: "必填欄位"
+    }
+  },
+  "交易方式": {
+    presence: {
+      message: "必填欄位"
+    }
+  },
+};
+
+
+inputs.forEach((item) => {
+  item.addEventListener("change", function () {
+    
+    item.nextElementSibling.textContent = '';
+    let errors = validate(form, constraints) || '';
+    console.log(errors)
+
+    if (errors) {
+      Object.keys(errors).forEach(function (keys) {
+        // console.log(document.querySelector(`[data-message=${keys}]`))
+        document.querySelector(`[data-message="${keys}"]`).textContent = errors[keys];
+      })
+    }
+  });
+});
